@@ -19,5 +19,11 @@ namespace ErrorProneWebsite.Tests
 
 
         }
+        [TestMethod]
+        public void TheFileManagerHandlesAMissingFile()
+        {
+            FileManager fileManager =new FileManager(@"D:\MissingFileThereIsNoFileHere.txt");
+            Assert.IsTrue(fileManager.GetContent().Contains("Oops!The content could not be found at the location specified."));
+        }
     }
 }

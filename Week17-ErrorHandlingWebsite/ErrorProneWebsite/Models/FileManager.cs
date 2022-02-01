@@ -32,12 +32,22 @@ namespace ErrorProneWebsite.Models
         public string GetContent()
         {
             string contentMessage = String.Empty;
-            StreamReader streamReader = null;
+            //StreamReader streamReader = null;
             try
             {
-                streamReader = new StreamReader(_contentFilePath);
-                contentMessage = streamReader.ReadToEnd();
+                using (StreamReader streamReader = new StreamReader(_contentFilePath))
+                {
+                    contentMessage = streamReader.ReadToEnd();
+                }
             }
+            catch (FileNotFoundException fnfEx)
+            {
+                contentMessage = String.Format("{0}{1}{2}",
+                "Oops! The content could not be found at the location specified.",
+                 Environment.NewLine,
+                 fnfEx.Message);
+            }
+
             catch (Exception ex)
             {
                 contentMessage = String.Format("{0}{1}{2}",
@@ -45,11 +55,25 @@ namespace ErrorProneWebsite.Models
                 Environment.NewLine,
                 ex.Message);
             }
-            finally
+/*            finally
             {
                 if (streamReader != null) streamReader.Close();
+            }*/
+            return contentMessage;
+        }
+
+        public string GetEvenMoreContent()
+        {
+            string contentMessage = String.Empty;
+            if (!File.Exists(_contentFilePath)) throw new FileNotFoundException(
+           "The content file doesn't exist in the location specified...");
+            using (StreamReader streamReader = new StreamReader(_contentFilePath))
+            {
+                contentMessage = streamReader.ReadToEnd();
             }
             return contentMessage;
         }
+
+
     }
 }
